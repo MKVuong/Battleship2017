@@ -14,7 +14,7 @@ Purpose:		Battleship console application that features AI with
 #include "stdafx.h"
 #include <iostream>
 #include <vector>
-#include <iomanip>
+#include <iomanip>		//setw
 #include <time.h>
 #include <map>
 #include <algorithm>	//find_if
@@ -385,8 +385,8 @@ void update()
 {
 	system("cls");
 	//Print Offense grid
-	cout << "     Offense Grid" << endl;
-	cout << " |A|B|C|D|E|F|G|H|I|J|" << endl;
+	cout << setw(17) << "Offense Grid" << "         " << setw(17) << "Defense Grid\n";
+	cout << " |A|B|C|D|E|F|G|H|I|J|    |A|B|C|D|E|F|G|H|I|J|\n";
 	for (int i = 0; i < rows; i++)
 	{
 		cout << i << "|";
@@ -409,20 +409,11 @@ void update()
 				cout << "X|";
 			else if (gridOffense[j][i] == hit)
 				cout << "@|";
-
 		}
-		cout << endl;
-	}
-	//cout << "----------------------\n";
-	//Print Defense grid
-	cout << "     Defense Grid" << endl;
-	cout << " |A|B|C|D|E|F|G|H|I|J|" << endl;
-	for (int i = 0; i < rows; i++)
-	{
-		cout << i << "|";
+		cout << "   " << i << "|";
 		for (int j = 0; j < cols; j++)
 		{
-			//cout << gridDefense[j][i] << "|";
+			//shows defense grid
 			if (gridDefense[j][i] == water)
 				cout << " |";
 			else if (gridDefense[j][i] == ship)
@@ -668,7 +659,7 @@ int main()
 	//cout << "Place your Destroyer (2 units) Ex: 0a 1a\n";
 	while (!checkAnswer());
 
-	//Change pointer to AI's Destroyer
+	//Direct Ship pointer to all of AI's Ships
 	shipPtr = &d2;
 	populateEnemyGrid();
 	shipPtr = &s2;

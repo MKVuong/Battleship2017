@@ -4,7 +4,7 @@
 
 Program:		Battleship
 Author:			Minh Kristein Vuong
-Date started:	9/20/2017
+Date started:		9/20/2017
 
 Purpose:		Battleship console application that features AI with
 				two difficulty settings.

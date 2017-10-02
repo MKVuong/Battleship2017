@@ -19,6 +19,10 @@ Purpose:		Battleship console application that features AI with
 #include <map>
 #include <algorithm>	//find_if
 #include "Ship.h"
+#include "Point.h"
+#include "Bot.h"
+#include "EasyBot.h"
+#include "HardBot.h"
 #include <stdlib.h>		//srand, rand
 #include <stdio.h>		//NULL
 //#include <cstdlib>
@@ -47,7 +51,9 @@ int pointCounter;	//sum of points per ship
 int sizeLimit;		//used in checkAnswer()
 int dif;			//distance between 2 coordinates
 int compHP = 17;	//computer's healthpoints
+int humanHP = 17;	//human's healthpoints
 Ship *shipPtr;		//Ship pointer for user's ships
+Bot *botPtr;
 bool findHit(int);
 bool horizontal();
 bool vertical();
@@ -145,8 +151,8 @@ bool attack()
 		gridOffense[x][y] = hit;
 		update();
         cout << "         HIT\n";
-		//Create function to cycle through all ships' vectors of points to find what ship was hit, remove that point
-		//	and check if vector.empty(), announce sunken ship if so
+		//Create function to cycle through all ships' vectors of points to find what ship was hit, 
+		//	remove that point and check if vector.empty(), announce sunken ship if so
 		findHit(human);
 		compHP--;	//subtract 1 health point from computer
 
@@ -167,7 +173,7 @@ bool attack()
 	return false;
 }
 
-//Player 1 - Human. Player 2 - AI.
+//Parameter is either human or computer
 bool findHit(int attacker)
 {
 	//Initalize array of pointers to computer's ships
@@ -188,14 +194,15 @@ bool findHit(int attacker)
 	//Cycle through all ships for to find the hit
 	for (int i = 0; i < 5; i++)
 	{
-		for (vector<Point>::iterator it = shipArPtrs[i]->coords.begin(); it != shipArPtrs[i]->coords.end(); it++)
+		for (vector<Point>::iterator it = shipArPtrs[i]->coords.begin(); 
+			it != shipArPtrs[i]->coords.end(); it++)
 		{
 			//Compare vector element thats being pointed at, to the hit's x & y
 			if (it->x == x && it->y == y)
 			{
 				*it = shipArPtrs[i]->coords.back();
 				shipArPtrs[i]->coords.pop_back();
-				//cout << "Ship found: " << shipArPtrs[i]->getName() << ". Current vector elements remaining:\n";
+				//cout << "Ship found: " << shipArPtrs[i]->getName() << ". Current vctr elements remain:\n";
 
 				//Check if that entire ship is destroyed
 				if (shipArPtrs[i]->coords.empty())
@@ -203,15 +210,15 @@ bool findHit(int attacker)
 					cout << "Bot: You sank my " << shipArPtrs[i]->getName() << "!\n";
 				}
 				//resetStrat = 1;	//only apply this when computer destroys human's ship
-
-				/*
+				
 				//Display remaining vector elements of that ship
-				for (vector<Point>::iterator it = shipArPtrs[i]->coords.begin(); it != shipArPtrs[i]->coords.end(); it++)
+				/*for (vector<Point>::iterator it = shipArPtrs[i]->coords.begin(); 
+					it != shipArPtrs[i]->coords.end(); it++)
 				{
 					cout << it->x << ", ";
 					cout << (*it).y << endl;
-				}
-				*/
+				}*/
+				
 				return true;
 			}
 		}
@@ -231,59 +238,58 @@ void populateEnemyGrid()
 	xran = rand() % rows;
 	yran = rand() % cols;
 
-		//If selected random coordinate is occupied, find another
-		while (gridOffense[xran][yran] == ship)
-		{
-			//Select random coordinate
-			srand(time(NULL));	//seeds random time
-			xran = rand() % rows;
-			yran = rand() % cols;
-		}
+	//If selected random coordinate is occupied, find another
+	while (gridOffense[xran][yran] == ship)
+	{
+		//Select random coordinate
+		srand(time(NULL));	//seeds random time
+		xran = rand() % rows;
+		yran = rand() % cols;
+	}
 
-		//Randomize direction
-		srand(time(0));	//seeds random time
-		int temp = rand() % 2;
-		if (temp == 0)	//if temp is even
+	//Randomize direction
+	srand(time(0));	//seeds random time
+	int temp = rand() % 2;
+	if (temp == 0)	//if temp is even
+	{
+		//Cycle through again if placement fails
+		while (!horizontal())
 		{
-			//Cycle through again if placement fails
-			while (!horizontal())
+			//choose a different coordinate if outer while fails
+			while (gridOffense[xran][yran] == ship)
 			{
-				//choose a different coordinate if outer while fails
-				while (gridOffense[xran][yran] == ship)
-				{
-					//Select random coordinate
-					srand(time(NULL));	//seeds random time
-					xran = rand() % rows;
-					yran = rand() % cols;
-				}
+				//Select random coordinate
+				srand(time(NULL));	//seeds random time
+				xran = rand() % rows;
+				yran = rand() % cols;
 			}
 		}
-		else
+	}
+	else
+	{
+		//Cycle through again if placement fails
+		while (!vertical())
 		{
-			//Cycle through again if placement fails
-			while (!vertical())
+			//choose a different coordinate if outer while fails
+			while (gridOffense[xran][yran] == ship)
 			{
-				//choose a different coordinate if outer while fails
-				while (gridOffense[xran][yran] == ship)
-				{
-					//Select random coordinate
-					srand(time(NULL));	//seeds random time
-					yran = rand() % cols;
-					xran = rand() % rows;
-				}
+				//Select random coordinate
+				srand(time(NULL));	//seeds random time
+				yran = rand() % cols;
+				xran = rand() % rows;
 			}
-		}	
-		
-		/*
-		cout << "-@-@-@-@-@-@-@-Checks AI ship vectors-@-@-@-@-@-@-@-\n";
-		for (vector<Point>::iterator it = shipPtr->coords.begin(); it != shipPtr->coords.end(); it++)
-		{
-			cout << it->x << ", ";
-			cout << (*it).y << endl;
-		}	
-		cout << "-@-@-@-@-@-@-@-@-@-@-@-@-@-@-\n";
-		*/
-		update();
+		}
+	}	
+	
+	/*cout << "-@-@-@-@-@-@-@-Checks AI ship vectors-@-@-@-@-@-@-@-\n";
+	for (vector<Point>::iterator it = shipPtr->coords.begin(); it != shipPtr->coords.end(); it++)
+	{
+		cout << it->x << ", ";
+		cout << (*it).y << endl;
+	}	
+	cout << "-@-@-@-@-@-@-@-@-@-@-@-@-@-@-\n";*/
+	
+	update();
 }
 
 //AI horizontal ship placement - returns true if ship placement successful
@@ -312,8 +318,7 @@ bool horizontal()
 			//cout << xran - i + positiveCount << ", " << yran << endl;
 		}
 		else
-		{
-			
+		{			
 			//Reads through all coordinates, removes them while changing coordinates to water
 			vector<Point>::iterator it = shipPtr->coords.begin();
 			while (shipPtr->coords.size() > 0)
@@ -385,11 +390,12 @@ void update()
 {
 	system("cls");
 	//Print Offense grid
-	cout << setw(17) << "Offense Grid" << "         " << setw(17) << "Defense Grid\n";
-	cout << " |A|B|C|D|E|F|G|H|I|J|    |A|B|C|D|E|F|G|H|I|J|\n";
+	cout << setw(17) << "Offense Grid" << "              " << setw(17) << "Defense Grid\n";
+	cout << " |A|B|C|D|E|F|G|H|I|J|         |A|B|C|D|E|F|G|H|I|J|\n";
 	for (int i = 0; i < rows; i++)
 	{
 		cout << i << "|";
+		//Prints OFFENSE grid
 		for (int j = 0; j < cols; j++)
 		{
 			/* PROPER
@@ -410,10 +416,10 @@ void update()
 			else if (gridOffense[j][i] == hit)
 				cout << "@|";
 		}
-		cout << "   " << i << "|";
+		cout << "        " << i << "|";
+		//Prints DEFENSE grid
 		for (int j = 0; j < cols; j++)
 		{
-			//shows defense grid
 			if (gridDefense[j][i] == water)
 				cout << " |";
 			else if (gridDefense[j][i] == ship)
@@ -602,8 +608,6 @@ void placeShip()
 	cout << "y is: " << y << endl;
 	cout << "x2 is: " << x2 << endl;
 	cout << "y2 is: " << y2 << endl;*/
-
-	//shipPtr->points[0].x = x;
 	
 	//Update game after ship placement successful
 	update();
@@ -634,25 +638,10 @@ void convertTokens()
 int main()
 {
 	update();
-    /* CYCLING THROUGH A SHIP'S POINTS
-	Ship a(2, "Sub");
 
-	//BE SURE TO MAKE AN ARRAY OF POINTERS 
 
-	cout << a.getName() << endl;
-	a.points[0].x = 1;
-	a.points[0].y = 2;
-	a.points[1].x = 3;
-	a.points[1].y = 4;	
-	a.points[2].x = 5;
-	a.points[2].y = 6;
-	
-	enum {a_psize = sizeof(a.points) / sizeof(a.points[0]) };
-	for (int i = 0; i < a_psize && a.points[i].x < 10; i++)
-	{
-		cout << a.points[i].x << " " << a.points[i].y << endl;
-	}
-	*/
+	//HardBot bot;
+	//botPtr = &bot;
 
 	//Change ship pointer to the Destroyer
 	shipPtr = &d;
@@ -670,34 +659,12 @@ int main()
 	populateEnemyGrid();
 	shipPtr = &ca2;
 	populateEnemyGrid();
-	/*
-	shipPtr->coords.push_back(Point(6, 9));
-	shipPtr->coords.push_back(Point(2, 3));
-	shipPtr->coords.push_back(Point(5, 6));
-	
-	cout << shipPtr->coords.size() << endl;
 
-	for (vector<Point>::iterator it = shipPtr->coords.begin(); it != shipPtr->coords.end(); it++)
-	{
-		cout << it->x << ", ";
-		cout << (*it).y << endl;		
-
-		if (it->x == 2 && it->y == 3)
-		{
-			*it = shipPtr->coords.back();
-			shipPtr->coords.pop_back();
-			it--;
-		}
-	}
-
-	for (vector<Point>::iterator it = shipPtr->coords.begin(); it != shipPtr->coords.end(); it++)
-	{
-		cout << it->x << ", ";
-		cout << (*it).y << endl;
-	}
-
-
-	cout << shipPtr->coords.size();*/
+	/////////////////////////
+	//
+	// Place human's ships
+	//
+	/////////////////////////
 
 	//Change ship pointer to the Submarine
 	shipPtr = &s;
@@ -715,8 +682,10 @@ int main()
 	shipPtr = &ca;
 	//while (!checkAnswer());
 
+	// Commence Firing!
 	while (!attack());
 
+	// GAME OVER
 	if (compHP == 0)
 		cout << "\nYou are VICTORIOUS! GG.\n";
 	else

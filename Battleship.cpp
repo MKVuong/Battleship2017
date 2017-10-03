@@ -43,8 +43,10 @@ const int computer = 2;
 int gridOffense[rows][cols] = { water };
 int gridDefense[rows][cols] = { water };
 
-//Declarations 
+//Declarations
 string tokens[2];	//pretested coordinates
+string ans;			//holds user's answer
+int botChoice;		//Choose difficulty
 int x, x2, y, y2;	//approved coordinates to place ships
 int xran, yran;		//random coordinates for generating enemy ship
 int pointCounter;	//sum of points per ship
@@ -53,7 +55,7 @@ int dif;			//distance between 2 coordinates
 int compHP = 17;	//computer's healthpoints
 int humanHP = 17;	//human's healthpoints
 Ship *shipPtr;		//Ship pointer for user's ships
-Bot *botPtr;
+Bot *botPtr;		//Bot pointer for desired bot
 bool findHit(int);
 bool horizontal();
 bool vertical();
@@ -77,6 +79,10 @@ Ship s2(3, "Submarine");
 Ship c2(3, "Cruiser");
 Ship b2(4, "Battleship");
 Ship ca2(5, "Carrier");
+
+//Create potential AI
+HardBot hb;
+EasyBot eb;
 
 //Check input of attack
 bool checkAtk(string ans)
@@ -168,7 +174,7 @@ bool attack()
 	}
 
 	//Point()
-	enemyAttack();
+	botPtr->strategy();
 
 	return false;
 }
@@ -218,7 +224,6 @@ bool findHit(int attacker)
 					cout << it->x << ", ";
 					cout << (*it).y << endl;
 				}*/
-				
 				return true;
 			}
 		}
@@ -288,8 +293,6 @@ void populateEnemyGrid()
 		cout << (*it).y << endl;
 	}	
 	cout << "-@-@-@-@-@-@-@-@-@-@-@-@-@-@-\n";*/
-	
-	update();
 }
 
 //AI horizontal ship placement - returns true if ship placement successful
@@ -436,9 +439,6 @@ void update()
 
 bool checkAnswer()
 {
-	//Holds user's answer
-	string ans;
-
 	//Ask question
 	cout << "Place your " << shipPtr->getName() << " (Length: " << shipPtr->getLength()
 		<< ") Ex: 0a 1a\n";
@@ -637,16 +637,44 @@ void convertTokens()
 
 int main()
 {
-	update();
+	//Intro to game & ask user for difficulty
+	cout << "Welcome to Battleship\n\nChoose difficulty (Input number)"
+		<< "\n1. Challenger Bot\n2. Bronze Bot\n\n";
 
+	cin >> botChoice;
 
-	//HardBot bot;
-	//botPtr = &bot;
+	//Must retrieve correct input
+	while (botChoice < 1 || botChoice > 1)
+	{
+		cout << "Please enter a valid choice: ";
+		cin >> botChoice;
+	}
 
-	//Change ship pointer to the Destroyer
-	shipPtr = &d;
-	//cout << "Place your Destroyer (2 units) Ex: 0a 1a\n";
-	while (!checkAnswer());
+	switch (botChoice)
+	{
+	case 1: 
+		update();
+		cout << "Challenger Bot chosen.\n\n";
+		botPtr = &hb;
+		break;
+	case 2: 
+		update();
+		cout << "Bronze Bot chosen.\n\n";
+		break;
+	}
+	cout << "Populating enemy ships...\n\n";
+
+	//Populate vector of 100 points - Bot's potential target locations
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			botPtr->options.push_back(Point(i, j));
+		}
+	}
+	
+	//clears cin before getline cin
+	cin.ignore();
 
 	//Direct Ship pointer to all of AI's Ships
 	shipPtr = &d2;
@@ -659,12 +687,18 @@ int main()
 	populateEnemyGrid();
 	shipPtr = &ca2;
 	populateEnemyGrid();
+	update();
 
 	/////////////////////////
 	//
 	// Place human's ships
 	//
 	/////////////////////////
+
+	//Change ship pointer to the Destroyer
+	shipPtr = &d;
+	//cout << "Place your Destroyer (2 units) Ex: 0a 1a\n";
+	while (!checkAnswer());
 
 	//Change ship pointer to the Submarine
 	shipPtr = &s;

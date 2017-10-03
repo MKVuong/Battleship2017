@@ -8,7 +8,6 @@ Bot::Bot()
 	botName = "Nameless Bot";
 }
 
-
 Bot::~Bot()
 {
 }

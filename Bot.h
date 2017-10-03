@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include "Point.h"
 
 using namespace std;
 
@@ -16,9 +17,12 @@ private:
 	string botName;
 
 public:
+	//100 potential places for bot to target
+	vector<Point> options;
+
 	Bot();
 	~Bot();
-
+	
 	//Accessor methods
 	int getHealth();
 	string getBotName();

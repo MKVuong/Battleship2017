@@ -5,7 +5,7 @@
 
 HardBot::HardBot()
 {
-	setHealth(17);
+	//setHealth(17);	//Not needed, health set in super class
 	setBotName("Challenger Bot");
 }
 

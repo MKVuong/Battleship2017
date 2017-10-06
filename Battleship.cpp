@@ -146,7 +146,7 @@ bool attack()
 	if (gridOffense[x][y] == water)
 	{
 		gridOffense[x][y] = miss;
-		humanMsg = "MISS";
+		humanMsg = "You missed your shot";
 		//cout << "         MISS\n";
 	}
 
@@ -154,7 +154,7 @@ bool attack()
 	else if (gridOffense[x][y] == ship)
 	{
 		gridOffense[x][y] = hit;
-		humanMsg = "HIT";
+		humanMsg = "Direct hit";
         //cout << "         HIT\n";
 		//Create function to cycle through all ships' vectors of points to find what ship was hit, 
 		//	remove that point and check if vector.empty(), announce sunken ship if so
@@ -170,7 +170,7 @@ bool attack()
 	else if (gridOffense[x][y] == miss || gridOffense[x][y] == hit)
 	{
 		//cout << "You just bombed the target area again Captain, what a waste.\n";
-		humanMsg = "WASTE";
+		humanMsg = "You wasted your shot";
 	}
 
 
@@ -387,23 +387,23 @@ void update()
 {
 	system("cls");
 	//Print Offense grid
-	cout << setw(17) << "Offense Grid" << "              " << setw(17) << "Defense Grid\n";
-	cout << " |A|B|C|D|E|F|G|H|I|J|         |A|B|C|D|E|F|G|H|I|J|\n";
+	cout << setw(17) << "Offense Grid" << "                      " << setw(17) << "Defense Grid\n";
+	cout << " |A|B|C|D|E|F|G|H|I|J|                 |A|B|C|D|E|F|G|H|I|J|\n";
 	for (int i = 0; i < rows; i++)
 	{
 		cout << i << "|";
 		//Prints OFFENSE grid
 		for (int j = 0; j < cols; j++)
 		{
-			/* PROPER
+			// PROPER
 			if (gridOffense[j][i] == water || gridOffense[j][i] == ship)
 				cout << " |";
 			else if (gridOffense[j][i] == miss)
 				cout << "X|";
 			else if (gridOffense[j][i] == hit)
 				cout << "@|";
-				*/
-			//shows offense grid temporarily
+				
+			/*//shows everything in offense grid - temporary
 			if (gridOffense[j][i] == water)
 				cout << " |";
 			else if (gridOffense[j][i] == ship)
@@ -411,9 +411,9 @@ void update()
 			else if (gridOffense[j][i] == miss)
 				cout << "X|";
 			else if (gridOffense[j][i] == hit)
-				cout << "@|";
+				cout << "@|";*/
 		}
-		cout << "        " << i << "|";
+		cout << "                " << i << "|";
 		//Prints DEFENSE grid
 		for (int j = 0; j < cols; j++)
 		{
@@ -431,12 +431,12 @@ void update()
 	cout << endl;
 
 	//HIT NOTIFICATION MESSAGE LINE
-	cout << setw(14) << humanMsg << "                " << setw(22) << botMsg << endl;
+	cout << setw(22) << humanMsg << "           " << setw(27) << botMsg << endl;
 
-	//TEMPPPPPPPPPPPPPPPPPPPPPPPPPORARY
-	cout << botPtr->sx << " " << botPtr->sy << endl;
+	//TEMPPPPPPPPPPPPPPPPPPPPPPPPPORARY - helps with whats going on in Bot's strategy()
+	/*cout << botPtr->sx << " " << botPtr->sy << endl;
 	cout << botPtr->resetStrat << endl;
-	cout << botPtr->atkDirection << endl;
+	cout << botPtr->atkDirection << endl;*/
 }
 
 bool checkAnswer()

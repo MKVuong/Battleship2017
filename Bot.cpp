@@ -38,7 +38,7 @@ void Bot::updateOptions()
 		it != options.end(); it++)
 	{
 		//Compare vector element thats being pointed at, to the hit's x & y
-		if (it->x == sx2 && it->y == sy)
+		if (it->x == sx2 && it->y == sy2)
 		{
 			//botMsg = "PASSED OPTIONS FOUND";
 			*it = options.back();	//assign to last element

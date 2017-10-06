@@ -47,6 +47,8 @@ void HardBot::strategy(Ship* hS[])
 		case ship: botMsg = getBotName() + " hit you";
 			gridDefense[sx][sy] = hit;
 			resetStrat = false;
+			sx2 = sx;
+			sy2 = sy;
 			findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
 			break;
 		}
@@ -63,7 +65,8 @@ void HardBot::strategy(Ship* hS[])
 			{
 				gridDefense[sx + 1][sy] = miss;
 				botMsg = getBotName() + " missed";
-				sx2 = sx+1;		//update sx to be new hit coordinate
+				sx2 = sx+1;		//update sx to be new coordinate to process
+				sy2 = sy;		//update sy to be new coordinate to process
 				updateOptions();//Update bot's vector of available points to attack
 
 			}
@@ -75,6 +78,7 @@ void HardBot::strategy(Ship* hS[])
 				atkDirection = hDirect;
 				sx++;			//update sx to be new hit coordinate
 				sx2 = sx;
+				sy2 = sy;		//update sy to be new coordinate to process
 				displacement++;	//increment displacement
 				findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
 				updateOptions();//Update bot's vector of available points to attack
@@ -83,8 +87,9 @@ void HardBot::strategy(Ship* hS[])
 			{
 				gridDefense[sx - 1][sy] = miss;
 				botMsg = getBotName() + " missed";
-				sx2=sx-1;			//update sx to be new hit coordinate
-				updateOptions();//Update bot's vector of available points to attack
+				sx2 = sx - 1;		//update sx to be new hit coordinate
+				sy2 = sy;
+				updateOptions();	//Update bot's vector of available points to attack
 
 			}
 			else if (gridDefense[sx - 1][sy] == ship && sx > 0)
@@ -95,7 +100,8 @@ void HardBot::strategy(Ship* hS[])
 				atkDirection = hDirect;
 				sx--;			//update sx to be new hit coordinate
 				sx2 = sx;
-				displacement--;
+				sy2 = sy;		//update sy to be new coordinate to process
+				//Notice: Does not need to decrement displacement because it will only be going left
 				findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
 				updateOptions();//Update bot's vector of available points to attack
 			}
@@ -104,6 +110,9 @@ void HardBot::strategy(Ship* hS[])
 			{
 				gridDefense[sx][sy + 1] = miss;
 				botMsg = getBotName() + " missed";
+				sx2 = sx;
+				sy2 = sy + 1;		//update sx to be new hit coordinate
+				updateOptions();	//Update bot's vector of available points to attack
 			}
 			else if (gridDefense[sx][sy + 1] == ship && sy < 9)
 			{
@@ -111,11 +120,20 @@ void HardBot::strategy(Ship* hS[])
 				botMsg = getBotName() + " hit you";
 				//CHECK FOR SUNKEN 2-LENGTH SHIP
 				atkDirection = vDirect;
+				sy++;			//update sx to be new hit coordinate
+				sy2 = sy;
+				sx2 = sx;
+				displacement++;	//increment displacement
+				findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
+				updateOptions();//Update bot's vector of available points to attack
 			}
 			else if (gridDefense[sx][sy - 1] == water && sy > 0)
 			{
 				gridDefense[sx][sy - 1] = miss;
 				botMsg = getBotName() + " missed";
+				sy2 = sy - 1;		//update sx to be new hit coordinate
+				sx2 = sx;
+				updateOptions();	//Update bot's vector of available points to attack
 			}
 			else if (gridDefense[sx][sy - 1] == ship && sy > 0)
 			{
@@ -123,6 +141,12 @@ void HardBot::strategy(Ship* hS[])
 				botMsg = getBotName() + " hit you";
 				//CHECK FOR SUNKEN 2-LENGTH SHIP
 				atkDirection = vDirect;
+				sy++;			//update sx to be new hit coordinate
+				sy2 = sy;
+				sx2 = sx;
+				displacement++;	//increment displacement
+				findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
+				updateOptions();//Update bot's vector of available points to attack
 
 			}
 			return;	//leave this method once atkDirection found
@@ -131,7 +155,6 @@ void HardBot::strategy(Ship* hS[])
 		//TESTTTTTTTTTTTTT, UPDATE SX EVERY TIME A HIT IS FOUND
 
 		//Continue firing at horizontal ship
-		//***NOTICE***Reset atkDirection & resetStrat AFTER SINKING A SHIP
 		if (atkDirection == hDirect)
 		{
 			if (gridDefense[sx + 1][sy] == water && sx + 1 < rows)
@@ -139,6 +162,7 @@ void HardBot::strategy(Ship* hS[])
 				gridDefense[sx + 1][sy] = miss;
 				botMsg = getBotName() + " missed";
 				sx2 = sx+1;
+				sy2 = sy;
 				updateOptions();//Update bot's vector of available points to attack
 			}
 			else if (gridDefense[sx + 1][sy] == ship && sx + 1 < rows)
@@ -147,6 +171,7 @@ void HardBot::strategy(Ship* hS[])
 				botMsg = getBotName() + " hit you";
 				sx++;			//update sx to be the newly hit sx coordinate
 				sx2 = sx;
+				sy2 = sy;
 				displacement++;	//update displacement accordingly
 				findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
 				updateOptions();//Update bot's vector of available points to attack
@@ -163,11 +188,56 @@ void HardBot::strategy(Ship* hS[])
 					botMsg = getBotName() + " hit you";
 					sx--;			//update sx to be newly hit sx coordinate
 					sx2 = sx;
+					sy2 = sy;
 					findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
 					updateOptions();//Update bot's vector of available points to attack
 				}
 				//SHOULDN'T REACH THIS, SHIP SHOULD HAVE SUNKEN
 				else if (gridDefense[sx - 1][sy] == water || sx == 0)
+				{
+					botMsg = "WTF, SHIP IS UNKILLABLE???\n";
+				}
+			}
+		}
+		if (atkDirection == vDirect)
+		{
+			if (gridDefense[sx][sy + 1] == water && sy + 1 < cols)
+			{
+				gridDefense[sx][sy + 1] = miss;
+				botMsg = getBotName() + " missed";
+				sx2 = sx;
+				sy2 = sy + 1;
+				updateOptions();//Update bot's vector of available points to attack
+			}
+			else if (gridDefense[sx][sy + 1] == ship && sy + 1 < cols)
+			{
+				gridDefense[sx][sy + 1] = hit;
+				botMsg = getBotName() + " hit you";
+				sy++;			//update sx to be the newly hit sx coordinate
+				sx2 = sx;
+				sy2 = sy;
+				displacement++;	//update displacement accordingly
+				findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
+				updateOptions();//Update bot's vector of available points to attack
+			}
+			//CHANGE DIRECTION
+			else if (gridDefense[sx][sy + 1] == miss || sy == 9 ||
+				gridDefense[sx][sy + 1] == hit)
+			{
+				sy = sy - displacement;	//set sx to its original position
+				displacement = 0;		//reset displacement
+				if (gridDefense[sx][sy - 1] == ship)
+				{
+					gridDefense[sx][sy - 1] = hit;
+					botMsg = getBotName() + " hit you";
+					sy--;			//update sx to be newly hit sx coordinate
+					sx2 = sx;
+					sy2 = sy;
+					findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
+					updateOptions();//Update bot's vector of available points to attack
+				}
+				//SHOULDN'T REACH THIS, SHIP SHOULD HAVE SUNKEN
+				else if (gridDefense[sx][sy - 1] == water || sy == 0)
 				{
 					botMsg = "WTF, SHIP IS UNKILLABLE???\n";
 				}
@@ -189,9 +259,9 @@ bool HardBot::findCpuHit(Ship* hS[])
 			it != hS[i]->coords.end(); it++)
 		{
 			//Compare vector element thats being pointed at, to the hit's x & y
-			if (it->x == sx && it->y == sy)
+			if (it->x == sx2 && it->y == sy2)
 			{
-				//botMsg = "PASSED COORDS FOUND " + hS[i]->coords.empty();
+				//botMsg = passed coordinates match found
 				*it = hS[i]->coords.back();	//assign to last element
 				hS[i]->coords.pop_back();
 				//cout << "Ship found: " << shipArPtrs[i]->getName() << ". Current vctr elements remain:\n";
@@ -202,11 +272,12 @@ bool HardBot::findCpuHit(Ship* hS[])
 					//Ship is destroyed
 					resetStrat = true;		//reactivate resetStrat
 					atkDirection = nDirect;	//reset to atk direction to neutral
+					displacement = 0;		//reset displacement to 0
 					botMsg = "Your " + hS[i]->getName() + " has been destroyed!";
 				}
 				//Display remaining vector elements of that ship
-				/*for (vector<Point>::iterator it = shipArPtrs[i]->coords.begin();
-				it != shipArPtrs[i]->coords.end(); it++)
+				/*for (vector<Point>::iterator it = hS[i]->coords.begin();
+				it != hS[i]->coords.end(); it++)
 				{
 				cout << it->x << ", ";
 				cout << (*it).y << endl;

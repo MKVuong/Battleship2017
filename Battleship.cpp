@@ -46,8 +46,8 @@ int xran, yran;		//random coordinates for generating enemy ship
 int pointCounter;	//sum of points per ship
 int sizeLimit;		//used in checkAnswer()
 int dif;			//distance between 2 coordinates
-int compHP = 17;	//computer's healthpoints
-int humanHP = 17;	//human's healthpoints
+int hpComputer = 17;//computer's healthpoints
+int hpHuman = 5;	//human's healthpoints
 Ship *shipPtr;		//Ship pointer for user's ships
 Bot *botPtr;		//Bot pointer for desired bot
 bool findHit(int);
@@ -159,10 +159,10 @@ bool attack()
 		//Create function to cycle through all ships' vectors of points to find what ship was hit, 
 		//	remove that point and check if vector.empty(), announce sunken ship if so
 		findHit(human);
-		compHP--;	//subtract 1 health point from computer
+		hpComputer--;	//subtract 1 health point from computer
 
 		//Checks for Game Over
-		if (compHP == 0 || humanHP == 0)
+		if (hpComputer == 0 || hpHuman == 0)
 			return true;
 	}
 
@@ -185,6 +185,10 @@ bool attack()
 	cout << botPtr->resetStrat << endl;
 	cout << botPtr->atkDirection << endl;
 	*/
+
+	//Checks for Game Over
+	if (hpComputer == 0 || hpHuman == 0)
+		return true;
 
 	//Not game over yet
 	return false;
@@ -209,7 +213,7 @@ bool findHit(int attacker)
 				//Check if that entire ship is destroyed
 				if (shipArPtrs[i]->coords.empty())
 				{
-					cout << "Bot: You sank my " << shipArPtrs[i]->getName() << "!\n";
+					humanMsg = "You destroyed their " + shipArPtrs[i]->getName() + "!";
 				}
 				
 				//Display remaining vector elements of that ship
@@ -701,19 +705,19 @@ int main()
 	//Change ship pointer to the Destroyer
 	shipPtr = &d;
 	//cout << "Place your Destroyer (2 units) Ex: 0a 1a\n";
-	while (!checkAnswer());
+	//while (!checkAnswer());
 
 	//Change ship pointer to the Submarine
 	shipPtr = &s;
-	while (!checkAnswer());
+	//while (!checkAnswer());
 
 	//Change ship pointer to the Cruiser
 	shipPtr = &c;
-	while (!checkAnswer());
+	//while (!checkAnswer());
 
 	//Change ship pointer to the Battleship
 	shipPtr = &b;
-	while (!checkAnswer());
+	//while (!checkAnswer());
 
 	//Change ship pointer to the Carrier
 	shipPtr = &ca;
@@ -722,11 +726,14 @@ int main()
 	// Commence Firing!
 	while (!attack());
 
+	//Final update before victory/defeat message
+	update();
+
 	// GAME OVER
-	if (compHP == 0)
-		cout << "\nYou are VICTORIOUS! GG.\n";
+	if (hpComputer == 0)
+		cout << "\nYou are VICTORIOUS! GG.\n\n\n\n";
 	else
-		cout << "\nYou've been DEFEATED, what a loser. GG.\n";
+		cout << "\nYou've been DEFEATED, what a loser. GG.\n\n\n\n";
 
 	cout << endl;
 	system("pause");

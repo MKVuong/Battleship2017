@@ -31,4 +31,8 @@ extern int gridDefense[rows][cols];
 extern string humanMsg;
 extern string botMsg;
 
+//Healthpoints for players
+extern int hpHuman;
+extern int hpComputer;
+
 #endif

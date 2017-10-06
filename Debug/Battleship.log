@@ -1,10 +1,10 @@
 ﻿  Battleship.cpp
-c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(232): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(240): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(246): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(257): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(272): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(324): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(372): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(236): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(244): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(250): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(261): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(276): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(328): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\mkvuo\source\repos\battleship\battleship\battleship.cpp(376): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Battleship.vcxproj -> C:\Users\mkvuo\source\repos\Battleship\Debug\Battleship.exe
   Battleship.vcxproj -> C:\Users\mkvuo\source\repos\Battleship\Debug\Battleship.pdb (Partial PDB)

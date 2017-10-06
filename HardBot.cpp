@@ -141,10 +141,9 @@ void HardBot::strategy(Ship* hS[])
 				botMsg = getBotName() + " hit you";
 				//CHECK FOR SUNKEN 2-LENGTH SHIP
 				atkDirection = vDirect;
-				sy++;			//update sx to be new hit coordinate
+				sy--;			//update sx to be new hit coordinate. Displacement update unnecessary
 				sy2 = sy;
 				sx2 = sx;
-				displacement++;	//increment displacement
 				findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
 				updateOptions();//Update bot's vector of available points to attack
 
@@ -275,6 +274,7 @@ bool HardBot::findCpuHit(Ship* hS[])
 					displacement = 0;		//reset displacement to 0
 					botMsg = "Your " + hS[i]->getName() + " has been destroyed!";
 				}
+				hpHuman--;
 				//Display remaining vector elements of that ship
 				/*for (vector<Point>::iterator it = hS[i]->coords.begin();
 				it != hS[i]->coords.end(); it++)

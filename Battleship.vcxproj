@@ -149,6 +149,7 @@
     <ClInclude Include="Bot.h" />
     <ClInclude Include="EasyBot.h" />
     <ClInclude Include="HardBot.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="stdafx.h" />

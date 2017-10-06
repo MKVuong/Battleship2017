@@ -18,6 +18,7 @@ Purpose:		Battleship console application that features AI with
 #include <time.h>
 #include <map>
 #include <algorithm>	//find_if
+#include "Constants.h"
 #include "Ship.h"
 #include "Point.h"
 #include "Bot.h"
@@ -25,23 +26,16 @@ Purpose:		Battleship console application that features AI with
 #include "HardBot.h"
 #include <stdlib.h>		//srand, rand
 #include <stdio.h>		//NULL
-//#include <cstdlib>
 
 using namespace std;
-
-//Legend                                                                                |
-const int water	= 0;
-const int ship	= 1;
-const int miss	= 2;
-const int hit	= 3;
-
-//Players 1 & 2
-const int human = 1;
-const int computer = 2;
 
 //grids declared & initialized
 int gridOffense[rows][cols] = { water };
 int gridDefense[rows][cols] = { water };
+
+//Hit message notifications
+string humanMsg = "";
+string botMsg = "";
 
 //Declarations
 string tokens[2];	//pretested coordinates
@@ -64,7 +58,6 @@ bool attack();
 void placeShip();
 void convertTokens();
 void update();
-void enemyAttack();
 
 //Create your ships
 Ship d(2, "Destroyer");
@@ -73,12 +66,18 @@ Ship c(3, "Cruiser");
 Ship b(4, "Battleship");
 Ship ca(5, "Carrier");
 
+//Initalize array of pointers to human's ships
+Ship *hS[5] = { &d,&s,&c,&b,&ca };
+
 //Create enemy ships
 Ship d2(2, "Destroyer");
 Ship s2(3, "Submarine");
 Ship c2(3, "Cruiser");
 Ship b2(4, "Battleship");
 Ship ca2(5, "Carrier");
+
+//Initalize array of pointers to computer's ships
+Ship *shipArPtrs[5] = { &d2,&s2,&c2,&b2,&ca2 };
 
 //Create potential AI
 HardBot hb;
@@ -147,56 +146,53 @@ bool attack()
 	if (gridOffense[x][y] == water)
 	{
 		gridOffense[x][y] = miss;
-		update();
-		cout << "         MISS\n";
+		humanMsg = "MISS";
+		//cout << "         MISS\n";
 	}
 
 	//HIT
 	else if (gridOffense[x][y] == ship)
 	{
 		gridOffense[x][y] = hit;
-		update();
-        cout << "         HIT\n";
+		humanMsg = "HIT";
+        //cout << "         HIT\n";
 		//Create function to cycle through all ships' vectors of points to find what ship was hit, 
 		//	remove that point and check if vector.empty(), announce sunken ship if so
 		findHit(human);
 		compHP--;	//subtract 1 health point from computer
 
 		//Checks for Game Over
-		if (compHP == 0)
+		if (compHP == 0 || humanHP == 0)
 			return true;
 	}
 
 	//SHOT ALREADY TAKEN AT THIS LOCATION
 	else if (gridOffense[x][y] == miss || gridOffense[x][y] == hit)
 	{
-		cout << "You just bombed the target area again Captain, what a waste.\n";
+		//cout << "You just bombed the target area again Captain, what a waste.\n";
+		humanMsg = "WASTE";
 	}
 
-	//Point()
-	botPtr->strategy();
 
+
+	//Bot's turn to attack
+	botPtr->strategy(hS);
+	update();	// have 2 message strings connect and cout right after update, encasing hit/miss 
+			//from both parties
+
+	/*
+	cout << botPtr->sx << " " << botPtr->sy << endl;
+	cout << botPtr->resetStrat << endl;
+	cout << botPtr->atkDirection << endl;
+	*/
+
+	//Not game over yet
 	return false;
 }
 
 //Parameter is either human or computer
 bool findHit(int attacker)
 {
-	//Initalize array of pointers to computer's ships
-	Ship *shipArPtrs[5] = { &d2,&s2,&c2,&b2,&ca2 };
-
-	//Change to human's ships if computer is attacking
-	if (attacker == computer)
-	{
-		shipArPtrs[0] = &d;
-		shipArPtrs[1] = &s;
-		shipArPtrs[2] = &c;
-		shipArPtrs[3] = &b;
-		shipArPtrs[4] = &ca;
-	}
-
-	//Create 2nd array of pointers for when your ship is hit instead, have function take a int
-
 	//Cycle through all ships for to find the hit
 	for (int i = 0; i < 5; i++)
 	{
@@ -206,7 +202,7 @@ bool findHit(int attacker)
 			//Compare vector element thats being pointed at, to the hit's x & y
 			if (it->x == x && it->y == y)
 			{
-				*it = shipArPtrs[i]->coords.back();
+				*it = shipArPtrs[i]->coords.back();	//assign to last element
 				shipArPtrs[i]->coords.pop_back();
 				//cout << "Ship found: " << shipArPtrs[i]->getName() << ". Current vctr elements remain:\n";
 
@@ -215,7 +211,6 @@ bool findHit(int attacker)
 				{
 					cout << "Bot: You sank my " << shipArPtrs[i]->getName() << "!\n";
 				}
-				//resetStrat = 1;	//only apply this when computer destroys human's ship
 				
 				//Display remaining vector elements of that ship
 				/*for (vector<Point>::iterator it = shipArPtrs[i]->coords.begin(); 
@@ -229,11 +224,6 @@ bool findHit(int attacker)
 		}
 	}
 	return false;
-}
-
-void enemyAttack()
-{
-	//EMPTY FOR NOW
 }
 
 void populateEnemyGrid()
@@ -435,6 +425,14 @@ void update()
 		cout << endl;
 	}
 	cout << endl;
+
+	//HIT NOTIFICATION MESSAGE LINE
+	cout << setw(14) << humanMsg << "                " << setw(22) << botMsg << endl;
+
+	//TEMPPPPPPPPPPPPPPPPPPPPPPPPPORARY
+	cout << botPtr->sx << " " << botPtr->sy << endl;
+	cout << botPtr->resetStrat << endl;
+	cout << botPtr->atkDirection << endl;
 }
 
 bool checkAnswer()
@@ -570,11 +568,13 @@ void placeShip()
 	//Builds ship into designated coordinates
 	if (x == x2)
 	{
+		//if 1st coord is smaller, start from that and increment upwards
 		if (y < y2)
 		{
 			for (int i = 0; i < dif + 1; i++)
 			{
 				gridDefense[x][y + i] = ship;
+				shipPtr->coords.push_back(Point(x, y + i));
 			}
 		}
 		else if (y2 < y)
@@ -582,6 +582,7 @@ void placeShip()
 			for (int i = 0; i < dif + 1; i++)
 			{
 				gridDefense[x][y2 + i] = ship;
+				shipPtr->coords.push_back(Point(x, y2 + i));
 			}
 		}
 	}
@@ -592,6 +593,7 @@ void placeShip()
 			for (int i = 0; i < dif + 1; i++)
 			{
 				gridDefense[x+i][y] = ship;
+				shipPtr->coords.push_back(Point(x + i,y));
 			}
 		}
 		else if (x2 < x)
@@ -599,6 +601,7 @@ void placeShip()
 			for (int i = 0; i < dif + 1; i++)
 			{
 				gridDefense[x2+i][y] = ship;
+				shipPtr->coords.push_back(Point(x2 + i, y));
 			}
 		}
 	}
@@ -653,9 +656,9 @@ int main()
 	switch (botChoice)
 	{
 	case 1: 
+		botPtr = &hb;
 		update();
 		cout << "Challenger Bot chosen.\n\n";
-		botPtr = &hb;
 		break;
 	case 2: 
 		update();
@@ -698,7 +701,7 @@ int main()
 	//Change ship pointer to the Destroyer
 	shipPtr = &d;
 	//cout << "Place your Destroyer (2 units) Ex: 0a 1a\n";
-	while (!checkAnswer());
+	//while (!checkAnswer());
 
 	//Change ship pointer to the Submarine
 	shipPtr = &s;
@@ -714,7 +717,7 @@ int main()
 
 	//Change ship pointer to the Carrier
 	shipPtr = &ca;
-	//while (!checkAnswer());
+	while (!checkAnswer());
 
 	// Commence Firing!
 	while (!attack());
@@ -723,7 +726,7 @@ int main()
 	if (compHP == 0)
 		cout << "\nYou are VICTORIOUS! GG.\n";
 	else
-		cout << "\nYou are DEFEATED, what a loser. GG.\n";
+		cout << "\nYou've been DEFEATED, what a loser. GG.\n";
 
 	cout << endl;
 	system("pause");

@@ -12,7 +12,7 @@ public:
 	~EasyBot();
 
 	//EasyBot Implementation of strategy()
-	void strategy();
+	void strategy(Ship* hS[]);
 };
 
-#endif EASYBOT_H
+#endif 

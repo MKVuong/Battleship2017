@@ -31,3 +31,18 @@ void Bot::setBotName(string newName)
 {
 	botName = newName;
 }
+
+void Bot::updateOptions()
+{
+	for (vector<Point>::iterator it = options.begin();
+		it != options.end(); it++)
+	{
+		//Compare vector element thats being pointed at, to the hit's x & y
+		if (it->x == sx2 && it->y == sy)
+		{
+			//botMsg = "PASSED OPTIONS FOUND";
+			*it = options.back();	//assign to last element
+			options.pop_back();		//remove element
+		}
+	}
+}

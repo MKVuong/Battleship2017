@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <vector>
 #include "Point.h"
+#include "Constants.h"
 
 using namespace std;
 
@@ -30,6 +31,7 @@ public:
 	//Mutator methods
 	void setLength(int);
 	void setName(string);
+
 };
 
 #endif

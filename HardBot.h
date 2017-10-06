@@ -6,21 +6,14 @@
 
 class HardBot : public Bot
 {
-private:
-	bool resetStrat;
-
 public:
 	HardBot();
 	~HardBot();
-
-	//Accessor Methods
-	bool getResetStrat();
-
-	//Mutator Methods
-	void setResetStrat(bool);
 	
 	// HardBot Implementation of strategy()
-	void strategy();
+	void strategy(Ship* hS[]);
+
+	bool findCpuHit(Ship* hS[]);
 };
 
-#endif HARDBOT_H
+#endif

@@ -4,9 +4,7 @@
 
 EasyBot::EasyBot()
 {
-	setHealth(17);
 	setBotName("Bronze Bot");
-
 }
 
 
@@ -14,6 +12,6 @@ EasyBot::~EasyBot()
 {
 }
 
-void EasyBot::strategy()
+void EasyBot::strategy(Ship * hS[])
 {
 }

@@ -683,6 +683,12 @@ int main()
 	//clears cin before getline cin
 	cin.ignore();
 
+	/////////////////////////
+	//
+	// Place computer's ships
+	//
+	/////////////////////////
+
 	//Direct Ship pointer to all of AI's Ships
 	shipPtr = &d2;
 	populateEnemyGrid();
@@ -705,19 +711,19 @@ int main()
 	//Change ship pointer to the Destroyer
 	shipPtr = &d;
 	//cout << "Place your Destroyer (2 units) Ex: 0a 1a\n";
-	//while (!checkAnswer());
+	while (!checkAnswer());
 
 	//Change ship pointer to the Submarine
 	shipPtr = &s;
-	//while (!checkAnswer());
+	while (!checkAnswer());
 
 	//Change ship pointer to the Cruiser
 	shipPtr = &c;
-	//while (!checkAnswer());
+	while (!checkAnswer());
 
 	//Change ship pointer to the Battleship
 	shipPtr = &b;
-	//while (!checkAnswer());
+	while (!checkAnswer());
 
 	//Change ship pointer to the Carrier
 	shipPtr = &ca;

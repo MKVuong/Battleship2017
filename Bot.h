@@ -39,10 +39,11 @@ public:
 	void setHealth(int);
 	void setBotName(string);
 	
-	void updateOptions();	//remove element where attack was made
+	void updateOptions();			//remove element from bot's options vector where attack was made
+	bool findCpuHit(Ship* hS[]);	//remove element from corresponding ship vector where hit was made
 
 	//Pure virtual method
-	virtual void strategy(Ship* hS[]) = 0;	//Paramter is pointer to array of human Ships
+	virtual void strategy(Ship* hS[]) = 0;	//Parameter is pointer to array of human Ships
 };
 
 #endif 

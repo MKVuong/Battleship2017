@@ -46,8 +46,7 @@ int xran, yran;		//random coordinates for generating enemy ship
 int pointCounter;	//sum of points per ship
 int sizeLimit;		//used in checkAnswer()
 int dif;			//distance between 2 coordinates
-int hpComputer = 17;//computer's healthpoints
-int hpHuman = 5;	//human's healthpoints
+int hpHuman = 17;	//human's healthpoints
 Ship *shipPtr;		//Ship pointer for user's ships
 Bot *botPtr;		//Bot pointer for desired bot
 bool findHit(int);
@@ -89,14 +88,14 @@ bool checkAtk(string ans)
 	//Checks if answer is correct size
 	if (ans.length() != 2)
 	{
-		cout << "Please input only 2 characters (Ex. 5E):\n";
+		cout << " Please input only 2 characters (Ex. 5E):\n";
 		return false;
 	}
 
 	//Checks for 0-9
 	else if (ans.at(0) < '0' || ans.at(0) > '9')
 	{
-		cout << "'" << ans.at(0) << "' out of 0-9 range. Try again\n";
+		cout << " '" << ans.at(0) << "' out of 0-9 range. Try again\n";
 		return false;
 	}
 
@@ -104,7 +103,7 @@ bool checkAtk(string ans)
 	else if (!((ans.at(1) >= 'A' && ans.at(1) <= 'J') ||
 		(ans.at(1) >= 'a' && ans.at(1) <= 'j')))
 	{
-		cout << "'" << ans.at(1) << "' out of A-J range. Try again\n";
+		cout << " '" << ans.at(1) << "' out of A-J range. Try again\n";
 		return false;
 	}
 	return true;
@@ -114,7 +113,7 @@ bool checkAtk(string ans)
 bool attack()
 {
 	//Ask user where to attack
-	cout << "\nWhere would you like to bomb?\n";
+	cout << "\n Where would you like to bomb?\n\n";
 
 	//String to hold user's input
 	string ans;
@@ -159,10 +158,10 @@ bool attack()
 		//Create function to cycle through all ships' vectors of points to find what ship was hit, 
 		//	remove that point and check if vector.empty(), announce sunken ship if so
 		findHit(human);
-		hpComputer--;	//subtract 1 health point from computer
+		botPtr->setHealth(botPtr->getHealth()-1);	//subtract 1 health point from computer
 
-		//Checks for Game Over
-		if (hpComputer == 0 || hpHuman == 0)
+		//Checks if computer lost for Game Over
+		if (botPtr->getHealth() == 0)
 			return true;
 	}
 
@@ -181,13 +180,14 @@ bool attack()
 			//from both parties
 
 	/*
+	//For debugging purposes
 	cout << botPtr->sx << " " << botPtr->sy << endl;
 	cout << botPtr->resetStrat << endl;
 	cout << botPtr->atkDirection << endl;
 	*/
 
-	//Checks for Game Over
-	if (hpComputer == 0 || hpHuman == 0)
+	//Checks if human lost for Game Over
+	if (hpHuman == 0)
 		return true;
 
 	//Not game over yet
@@ -387,11 +387,11 @@ void update()
 {
 	system("cls");
 	//Print Offense grid
-	cout << setw(17) << "Offense Grid" << "                      " << setw(17) << "Defense Grid\n";
-	cout << " |A|B|C|D|E|F|G|H|I|J|                 |A|B|C|D|E|F|G|H|I|J|\n";
+	cout << setw(25) << "Offense Grid" << setw(32) << "Defense Grid\n";
+	cout << "         |A|B|C|D|E|F|G|H|I|J|          |A|B|C|D|E|F|G|H|I|J|\n";
 	for (int i = 0; i < rows; i++)
 	{
-		cout << i << "|";
+		cout << "        " << i << "|";
 		//Prints OFFENSE grid
 		for (int j = 0; j < cols; j++)
 		{
@@ -413,7 +413,7 @@ void update()
 			else if (gridOffense[j][i] == hit)
 				cout << "@|";*/
 		}
-		cout << "                " << i << "|";
+		cout << "         " << i << "|";
 		//Prints DEFENSE grid
 		for (int j = 0; j < cols; j++)
 		{
@@ -431,7 +431,7 @@ void update()
 	cout << endl;
 
 	//HIT NOTIFICATION MESSAGE LINE
-	cout << setw(22) << humanMsg << "           " << setw(27) << botMsg << endl;
+	cout << setw(30) << humanMsg << "         " << setw(22) << botMsg << endl;
 
 	//TEMPPPPPPPPPPPPPPPPPPPPPPPPPORARY - helps with whats going on in Bot's strategy()
 	/*cout << botPtr->sx << " " << botPtr->sy << endl;
@@ -442,7 +442,7 @@ void update()
 bool checkAnswer()
 {
 	//Ask question
-	cout << "Place your " << shipPtr->getName() << " (Length: " << shipPtr->getLength()
+	cout << " Place your " << shipPtr->getName() << " (Length: " << shipPtr->getLength()
 		<< ") Ex: 0a 1a\n";
 
 	//Retrieve user input
@@ -451,7 +451,7 @@ bool checkAnswer()
 	//Checks if answer is too large
 	if (ans.length() != 5)
 	{
-		cout << "Please input the correct format, not case sensitive (Ex. 5E 7e):\n";
+		cout << " Please input the correct format, not case sensitive (Ex. 5E 7e):\n";
 		return 0;
 	}
 
@@ -469,14 +469,14 @@ bool checkAnswer()
 		//Checks for 0-9
 		if (tokens[i].at(0) < '0' || tokens[i].at(0) > '9')
 		{
-			cout << "'" << tokens[i].at(0) << "' out of 0-9 range. Try again\n";
+			cout << " '" << tokens[i].at(0) << "' out of 0-9 range. Try again\n";
 			return 0;
 		}
 		//Checks for A-J (not caps-sensitive)
 		if (!((tokens[i].at(1) >= 'A' && tokens[i].at(1) <= 'J') ||
 			(tokens[i].at(1) >= 'a' && tokens[i].at(1) <= 'j')))
 		{
-			cout << "'" << tokens[i].at(1) << "' out of A-J range. Try again\n";
+			cout << " '" << tokens[i].at(1) << "' out of A-J range. Try again\n";
 			return 0;
 		}
 	}
@@ -486,14 +486,14 @@ bool checkAnswer()
 	//Tests if coordinates make ship of length 1
 	if(x==x2 && y==y2)
 	{
-		cout << "Please enter coordinates for a ship of length: " << shipPtr->getLength() << endl;
+		cout << " Please enter coordinates for a ship of length: " << shipPtr->getLength() << endl;
 		return 0;
 	}
 
 	//Tests if ship placed horizontally or vertically
 	if (!((x == x2 && y != y2) || (x != x2 && y == y2)))
 	{
-		cout << "Cannot place ship diagonally\n";
+		cout << " Cannot place ship diagonally\n";
 		return 0;
 	}
 
@@ -506,7 +506,7 @@ bool checkAnswer()
 	//Checks size of input coordinates
 	if (dif + 1 != shipPtr->getLength())
 	{
-		cout << "Please enter coordinates for a ship of length: " << shipPtr->getLength() << endl;
+		cout << " Please enter coordinates for a ship of length: " << shipPtr->getLength() << endl;
 		return 0;
 	}
 
@@ -519,7 +519,7 @@ bool checkAnswer()
 			{
 				if (gridDefense[x][y + i] == ship)
 				{
-					cout << "There already exists a ship within these coordinates, try again.\n";
+					cout << " There already exists a ship within these coordinates, try again.\n";
 					return 0;
 				}
 			}
@@ -530,7 +530,7 @@ bool checkAnswer()
 			{
 				if (gridDefense[x][y2 + i] == ship)
 				{
-					cout << "There already exists a ship within these coordinates, try again.\n";
+					cout << " There already exists a ship within these coordinates, try again.\n";
 					return 0;
 				}
 			}
@@ -544,7 +544,7 @@ bool checkAnswer()
 			{
 				if (gridDefense[x + i][y] == ship)
 				{
-					cout << "There already exists a ship within these coordinates, try again.\n";
+					cout << " There already exists a ship within these coordinates, try again.\n";
 					return 0;
 				}
 			}
@@ -555,7 +555,7 @@ bool checkAnswer()
 			{
 				if (gridDefense[x2 + i][y] == ship)
 				{
-					cout << "There already exists a ship within these coordinates, try again.\n";
+					cout << " There already exists a ship within these coordinates, try again.\n";
 					return 0;
 				}
 			}
@@ -564,7 +564,7 @@ bool checkAnswer()
 
 	//Place the ship and set to true
 	placeShip();
-	return 1;
+	return true;
 }
 
 void placeShip()
@@ -645,31 +645,32 @@ void convertTokens()
 int main()
 {
 	//Intro to game & ask user for difficulty
-	cout << "Welcome to Battleship\n\nChoose difficulty (Input number)"
-		<< "\n1. Challenger Bot\n2. Bronze Bot\n\n";
+	cout << " Welcome to Battleship\n\nChoose difficulty (Input number)"
+		<< "\n 1. Challenger Bot\n 2. Bronze Bot\n\n";
 
 	cin >> botChoice;
 
 	//Must retrieve correct input
-	while (botChoice < 1 || botChoice > 1)
+	while (botChoice < 1 || botChoice > 2)
 	{
-		cout << "Please enter a valid choice: ";
+		cout << " Please enter a valid choice: ";
 		cin >> botChoice;
 	}
 
 	switch (botChoice)
 	{
 	case 1: 
-		botPtr = &hb;
+		botPtr = &hb;	//set bot pointer to Hard Bot object
 		update();
-		cout << "Challenger Bot chosen.\n\n";
+		cout << " Challenger Bot chosen.\n\n";
 		break;
 	case 2: 
+		botPtr = &eb;	//set bot pointer to Easy Bot object
 		update();
-		cout << "Bronze Bot chosen.\n\n";
+		cout << " Bronze Bot chosen.\n\n";
 		break;
 	}
-	cout << "Populating enemy ships...\n\n";
+	cout << " Populating enemy ships...\n\n";
 
 	//Populate vector of 100 points - Bot's potential target locations
 	for (int i = 0; i < 10; i++)
@@ -736,10 +737,10 @@ int main()
 	update();
 
 	// GAME OVER
-	if (hpComputer == 0)
-		cout << "\nYou are VICTORIOUS! GG.\n\n\n\n";
-	else
-		cout << "\nYou've been DEFEATED, what a loser. GG.\n\n\n\n";
+	if (botPtr->getHealth() == 0)
+		cout << "\n\n You are VICTORIOUS! GG.\n\n\n\n\n\n\n";
+	else if(hpHuman == 0)
+		cout << "\n\n You've been DEFEATED, what a loser. GG.\n\n\n\n\n\n\n";
 
 	cout << endl;
 	system("pause");

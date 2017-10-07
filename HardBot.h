@@ -12,9 +12,6 @@ public:
 	
 	// HardBot Implementation of strategy()
 	void strategy(Ship* hS[]);
-
-	//Effectively halts aiming for specific ship once destroyed
-	bool findCpuHit(Ship* hS[]);
 };
 
 #endif

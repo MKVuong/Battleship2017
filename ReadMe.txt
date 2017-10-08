@@ -1,37 +1,22 @@
 ========================================================================
-    CONSOLE APPLICATION : [!output PROJECT_NAME] Project Overview
+                              Battleship
 ========================================================================
 
-AppWizard has created this [!output PROJECT_NAME] application for you.
-
-This file contains a summary of what you will find in each of the files that
-make up your [!output PROJECT_NAME] application.
-
-
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
-
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
-
-    This is the main application source file.
+A personal project where I've spent somewhere under 2 weeks and just recently
+completed in early October of 2017. It was a great practice which involved
+usage of Object Oriented Programming, and many programming concepts within.
 
 /////////////////////////////////////////////////////////////////////////////
-Other standard files:
+Game features
 
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named [!output PROJECT_NAME].pch and a precompiled types file named StdAfx.obj.
+Play against 2 different AI bots:
+    -Bronze Bot: Fires wrecklessly at your ships.
+    -Challenger Bot: Fires until detection of one of your ships, and will seek 
+        to obliterate it before moving onto the inevitable destruction of the
+        remainder of your forces! Will you even dare square up against 
+        the mighty formidable Challenger Bot?
 
 /////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
+Other notes: N/A.
 
 /////////////////////////////////////////////////////////////////////////////

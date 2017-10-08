@@ -434,9 +434,9 @@ void update()
 	cout << setw(30) << humanMsg << "         " << setw(22) << botMsg << endl;
 
 	//TEMPPPPPPPPPPPPPPPPPPPPPPPPPORARY - helps with whats going on in Bot's strategy()
-	/*cout << botPtr->sx << " " << botPtr->sy << endl;
+	cout << botPtr->sx << " " << botPtr->sy << endl;
 	cout << botPtr->resetStrat << endl;
-	cout << botPtr->atkDirection << endl;*/
+	cout << botPtr->atkDirection << endl;
 }
 
 bool checkAnswer()

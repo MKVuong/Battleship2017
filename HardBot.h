@@ -9,6 +9,8 @@ class HardBot : public Bot
 public:
 	HardBot();
 	~HardBot();
+
+	int changeDirection = nDirect;
 	
 	// HardBot Implementation of strategy()
 	void strategy(Ship* hS[]);

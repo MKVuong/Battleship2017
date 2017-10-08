@@ -28,6 +28,13 @@ public:
 	int displacement;		//Used for HardBot - Finishes off a ship in certain direction
 	bool resetStrat;		//Used for HardBot
 
+	//Clarified direction conditions
+	int current;
+	int right;
+	int left;
+	int down;
+	int up;
+
 	Bot();
 	~Bot();
 	

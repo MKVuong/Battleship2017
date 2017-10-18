@@ -30,6 +30,7 @@ extern int gridDefense[rows][cols];
 //Hit message notifications
 extern string humanMsg;
 extern string botMsg;
+extern string debugMsg;
 
 //Health points for Human
 extern int hpHuman;

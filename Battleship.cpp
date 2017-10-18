@@ -36,6 +36,7 @@ int gridDefense[rows][cols] = { water };
 //Hit message notifications
 string humanMsg = "";
 string botMsg = "";
+string debugMsg = "no bug";
 
 //Declarations
 string tokens[2];	//pretested coordinates
@@ -434,6 +435,7 @@ void update()
 	cout << setw(30) << humanMsg << "         " << setw(22) << botMsg << endl;
 
 	//TEMPPPPPPPPPPPPPPPPPPPPPPPPPORARY - helps with whats going on in Bot's strategy()
+	cout << debugMsg << endl;
 	cout << botPtr->sx << " " << botPtr->sy << endl;
 	cout << botPtr->resetStrat << endl;
 	cout << botPtr->atkDirection << endl;

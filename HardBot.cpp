@@ -24,6 +24,8 @@ void HardBot::strategy(Ship* hS[])
 	down = gridDefense[sx][sy + 1];
 	up = gridDefense[sx][sy - 1];
 
+	debugMsg = "no bug";
+
 	/////////////////////////////////////////////////
 	//
 	// Bot searches for your ship - resetStrat = initially TRUE
@@ -196,6 +198,7 @@ void HardBot::strategy(Ship* hS[])
 				displacement = 0;		//reset displacement
 				if (left == ship)
 				{
+					debugMsg = "left == ship";
 					gridDefense[sx - 1][sy] = hit;
 					botMsg = getBotName() + " hit you";
 					sx--;			//update sx to be newly hit sx coordinate
@@ -204,33 +207,35 @@ void HardBot::strategy(Ship* hS[])
 					findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
 					updateOptions();//Update bot's vector of available points to attack
 				}
+				//If reached the edge of the grid, change direction
+				else if (sx == 0)
+				{
+					debugMsg = "sx == 0";
+					displacement = 0;
+					atkDirection = vDirect;	//change direction
+					verticalProcess(hS);	//run immediately
+				}
 				//SHOULDN'T REACH THIS, SHIP SHOULD HAVE SUNKEN
-				else if (left == water || sx == 0)
+				else if (left == water)
 				{
 					displacement = 0;
 					//fired at multiple ships in different alignment, change alignment after this miss
-					if (sx > 0)
-					{
-						gridDefense[sx - 1][sy] = miss;
-						botMsg = getBotName() + " missed";
-						sx2 = sx - 1;
-						sy2 = sy;
-						updateOptions();		//Update bot's vector of available points to attack
-						changeDirection = 1;	//change the direction at the end of strategy()
-					}
-					else
-						atkDirection = vDirect;	//change direction immediately to do vertical same run
+					gridDefense[sx - 1][sy] = miss;
+					botMsg = getBotName() + " missed";
+					sx2 = sx - 1;
+					sy2 = sy;
+					updateOptions();		//Update bot's vector of available points to attack
+					atkDirection = vDirect;	//change the direction at the end of strategy()
 				}
 				else  //if left has been shot at before, reset entirely
 				{
 					resetStrat = true;
 					displacement = 0;
 					atkDirection = nDirect;
-					changeDirection = nDirect;
 				}
 			}
 		}
-		if (atkDirection == vDirect)
+		else if (atkDirection == vDirect)
 		{
 			if (down == water && sy + 1 < cols)
 			{
@@ -268,39 +273,166 @@ void HardBot::strategy(Ship* hS[])
 					updateOptions();//Update bot's vector of available points to attack
 				}
 				//SHOULDN'T REACH THIS, SHIP SHOULD HAVE SUNKEN
-				else if (up == water || sy == 0)
+				else if (up == water)
 				{
 					displacement = 0;
 					//fired at multiple ships in different alignment, change alignment after this miss
-					if (sy > 0)
-					{
-						gridDefense[sx][sy - 1] = miss;
-						botMsg = getBotName() + " missed";
-						sx2 = sx;
-						sy2 = sy - 1;
-						updateOptions();			//Update bot's vector of available points to attack
-						changeDirection = hDirect;	//change the direction at the end of strategy()
-					}
-					else
-					{
-						atkDirection = hDirect;
-						strategy(hS);		//change direction and run again immediately
-					}
+					gridDefense[sx][sy - 1] = miss;
+					botMsg = getBotName() + " missed";
+					sx2 = sx;
+					sy2 = sy - 1;
+					updateOptions();		//Update bot's vector of available points to attack
+					atkDirection = hDirect;	//change the direction at the end of strategy()
 				}
-				else  //if up has been shot at before, reset entirely
+				else if (sy == 0)
+				{
+					atkDirection = hDirect;
+					horizontalProcess(hS);		//change direction and run again immediately
+				}
+				//if up has been shot at before, reset entirely and shoot random location
+				else if (up == hit || up == miss)
 				{
 					resetStrat = true;
 					displacement = 0;
 					atkDirection = nDirect;
-					changeDirection = nDirect;
+					strategy(hS);
 				}
 			}
 		}
 	}
-	//if theres a changeDirection requested
-	if (changeDirection != nDirect)
+}
+
+void HardBot::verticalProcess(Ship* hS[])
+{
+	if (down == water && sy + 1 < cols)
 	{
-		atkDirection = changeDirection;
-		changeDirection = nDirect;		//reset changeDirection
+		gridDefense[sx][sy + 1] = miss;
+		botMsg = getBotName() + " missed";
+		sx2 = sx;
+		sy2 = sy + 1;
+		updateOptions();//Update bot's vector of available points to attack
 	}
+	else if (down == ship && sy + 1 < cols)
+	{
+		gridDefense[sx][sy + 1] = hit;
+		botMsg = getBotName() + " hit you";
+		sy++;			//update sx to be the newly hit sx coordinate
+		sx2 = sx;
+		sy2 = sy;
+		displacement++;	//update displacement accordingly
+		findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
+		updateOptions();//Update bot's vector of available points to attack
+	}
+	//CHANGE DIRECTION
+	else if (down == miss || sy + 1 == cols || down == hit)
+	{
+		sy = sy - displacement;			//set sx to its original position
+		up = gridDefense[sx][sy - 1];	//update direction value
+		displacement = 0;				//reset displacement
+		if (up == ship)
+		{
+			gridDefense[sx][sy - 1] = hit;
+			botMsg = getBotName() + " hit you";
+			sy--;			//update sx to be newly hit sx coordinate
+			sx2 = sx;
+			sy2 = sy;
+			findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
+			updateOptions();//Update bot's vector of available points to attack
+		}
+		//SHOULDN'T REACH THIS, SHIP SHOULD HAVE SUNKEN
+		else if (up == water || sy == 0)
+		{
+			displacement = 0;
+			//fired at multiple ships in different alignment, change alignment after this miss
+			if (sy > 0)
+			{
+				gridDefense[sx][sy - 1] = miss;
+				botMsg = getBotName() + " missed";
+				sx2 = sx;
+				sy2 = sy - 1;
+				updateOptions();		//Update bot's vector of available points to attack
+				atkDirection = hDirect;	//change the direction at the end of strategy()
+			}
+			else
+			{
+				atkDirection = hDirect;
+				horizontalProcess(hS);		//change direction and run again immediately
+			}
+		}
+		else  //if up has been shot at before, reset entirely
+		{
+			resetStrat = true;
+			displacement = 0;
+			atkDirection = nDirect;
+			strategy(hS);
+		}
+	}
+}
+
+void HardBot::horizontalProcess(Ship* hS[])
+{
+		if (right == water && sx + 1 < rows)
+		{
+			gridDefense[sx + 1][sy] = miss;
+			botMsg = getBotName() + " missed";
+			sx2 = sx + 1;
+			sy2 = sy;
+			updateOptions();//Update bot's vector of available points to attack
+		}
+		else if (right == ship && sx + 1 < rows)
+		{
+			gridDefense[sx + 1][sy] = hit;
+			botMsg = getBotName() + " hit you";
+			sx++;			//update sx to be the newly hit sx coordinate
+			sx2 = sx;
+			sy2 = sy;
+			displacement++;	//update displacement accordingly
+			findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
+			updateOptions();//Update bot's vector of available points to attack
+		}
+		//CHANGE DIRECTION
+		else if (right == miss || sx + 1 == rows || right == hit)
+		{
+			sx = sx - displacement;	//set sx to its original position
+			left = gridDefense[sx - 1][sy];
+			displacement = 0;		//reset displacement
+			if (left == ship)
+			{
+				debugMsg = "left == ship";
+				gridDefense[sx - 1][sy] = hit;
+				botMsg = getBotName() + " hit you";
+				sx--;			//update sx to be newly hit sx coordinate
+				sx2 = sx;
+				sy2 = sy;
+				findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
+				updateOptions();//Update bot's vector of available points to attack
+			}
+			//If reached the edge of the grid, change direction
+			else if (sx == 0)
+			{
+				debugMsg = "sx == 0";
+				displacement = 0;
+				atkDirection = vDirect;	//change direction
+				verticalProcess(hS);	//run immediately
+			}
+			//SHOULDN'T REACH THIS, SHIP SHOULD HAVE SUNKEN
+			else if (left == water)
+			{
+				displacement = 0;
+				//fired at multiple ships in different alignment, change alignment after this miss
+				gridDefense[sx - 1][sy] = miss;
+				botMsg = getBotName() + " missed";
+				sx2 = sx - 1;
+				sy2 = sy;
+				updateOptions();		//Update bot's vector of available points to attack
+				atkDirection = vDirect;	//change the direction at the end of strategy()
+			}
+			else  //if left has been shot at before, reset entirely
+			{
+				resetStrat = true;
+				displacement = 0;
+				atkDirection = nDirect;
+				strategy(hS);
+			}
+		}
 }

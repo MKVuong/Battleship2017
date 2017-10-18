@@ -14,6 +14,9 @@ public:
 	
 	// HardBot Implementation of strategy()
 	void strategy(Ship* hS[]);
+
+	void verticalProcess(Ship* hS[]);
+	void horizontalProcess(Ship* hs[]);
 };
 
 #endif

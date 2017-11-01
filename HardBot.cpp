@@ -10,7 +10,6 @@ HardBot::HardBot()
 	setBotName("Challenger Bot");
 }
 
-
 HardBot::~HardBot()
 {
 }
@@ -74,7 +73,7 @@ void HardBot::strategy(Ship* hS[])
 			{
 				gridDefense[sx + 1][sy] = miss;
 				botMsg = getBotName() + " missed";
-				sx2 = sx+1;		//update sx to be new coordinate to process
+				sx2 = sx + 1;		//update sx to be new coordinate to process
 				sy2 = sy;		//update sy to be new coordinate to process
 				updateOptions();//Update bot's vector of available points to attack
 
@@ -155,19 +154,22 @@ void HardBot::strategy(Ship* hS[])
 				sx2 = sx;
 				findCpuHit(hS);	//pops those coordinates out of its ship vector & checks ship status
 				updateOptions();//Update bot's vector of available points to attack
-
 			}
-			return;  //leave method after hit
-			//leave strategy() once atkDirection found
-			//if (atkDirection != nDirect)
-				//return;	
+			//reset shot entirely
+			else if (atkDirection == nDirect)
+			{
+				resetStrat = true;
+				displacement = 0;
+				atkDirection = nDirect;
+				return strategy(hS);
+			}
+			return;//leave strategy() once atkDirection found
+		}//end of whether atkDirection was found
 
 			//NOTICE
 			//if atkDirection NOT found, must check for 2 spaces away, if that fails, then resetStrat=1
 			//
-
-		}//end of whether atkDirection was found
-
+			
 		//Continue firing at horizontal ship
 		if (atkDirection == hDirect)
 		{
@@ -213,7 +215,7 @@ void HardBot::strategy(Ship* hS[])
 					debugMsg = "sx == 0";
 					displacement = 0;
 					atkDirection = vDirect;	//change direction
-					verticalProcess(hS);	//run immediately
+					return verticalProcess(hS);	//run immediately
 				}
 				//SHOULDN'T REACH THIS, SHIP SHOULD HAVE SUNKEN
 				else if (left == water)
@@ -232,6 +234,7 @@ void HardBot::strategy(Ship* hS[])
 					resetStrat = true;
 					displacement = 0;
 					atkDirection = nDirect;
+					return strategy(hS);
 				}
 			}
 		}
@@ -287,7 +290,7 @@ void HardBot::strategy(Ship* hS[])
 				else if (sy == 0)
 				{
 					atkDirection = hDirect;
-					horizontalProcess(hS);		//change direction and run again immediately
+					return horizontalProcess(hS);		//change direction and run again immediately
 				}
 				//if up has been shot at before, reset entirely and shoot random location
 				else if (up == hit || up == miss)
@@ -295,7 +298,7 @@ void HardBot::strategy(Ship* hS[])
 					resetStrat = true;
 					displacement = 0;
 					atkDirection = nDirect;
-					strategy(hS);
+					return strategy(hS);
 				}
 			}
 		}
@@ -364,7 +367,7 @@ void HardBot::verticalProcess(Ship* hS[])
 			resetStrat = true;
 			displacement = 0;
 			atkDirection = nDirect;
-			strategy(hS);
+			return strategy(hS);
 		}
 	}
 }
@@ -432,7 +435,7 @@ void HardBot::horizontalProcess(Ship* hS[])
 				resetStrat = true;
 				displacement = 0;
 				atkDirection = nDirect;
-				strategy(hS);
+				return strategy(hS);
 			}
 		}
 }

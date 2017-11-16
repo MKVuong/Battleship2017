@@ -17,6 +17,7 @@ Play against 2 bot difficulties:
         the mighty formidable Challenger Bot?
 
 /////////////////////////////////////////////////////////////////////////////
-Other notes:  Download Battleship.exe to play, enjoy!
+Other notes:    Download Battleship.exe to play, enjoy!
+Personal notes: Roughly 1,450 lines
 
 /////////////////////////////////////////////////////////////////////////////

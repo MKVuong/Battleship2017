@@ -2,7 +2,7 @@
                               Battleship
 ========================================================================
 
-A personal project where I've spent somewhere under 2 weeks and just recently
+A personal project where I've spent about 2 weeks and just recently
 completed in early October of 2017. It was a great practice which involved
 usage of Object Oriented Programming, and many programming concepts within.
 

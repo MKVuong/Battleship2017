@@ -9,7 +9,7 @@ usage of Object Oriented Programming, and many programming concepts within.
 /////////////////////////////////////////////////////////////////////////////
 Game features
 
-Play against 2 different AI bots:
+Play against 2 different bot difficulties:
     -Bronze Bot: Fires wrecklessly at your ships.
     -Challenger Bot: Fires until detection of one of your ships, and will seek 
         to obliterate it before moving onto the inevitable destruction of the

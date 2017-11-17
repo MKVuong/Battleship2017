@@ -1,6 +1,4 @@
-#include "stdafx.h"
 #include "Ship.h"
-
 
 Ship::Ship()
 {
@@ -17,7 +15,6 @@ Ship::Ship(int newLength, string newName)
 Ship::~Ship()
 {
 }
-
 
 int Ship::getLength()
 {

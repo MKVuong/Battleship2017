@@ -1,4 +1,10 @@
-#pragma once
+/****************************************************************
+FILE:		Ship.h
+AUTHOR:		Kristein Minh Vuong
+
+PURPOSE:	Ship objects are created to define their name, length,
+			and vector of coordinates that they each individually cover.
+****************************************************************/
 #ifndef SHIP_H
 #define SHIP_H
 
@@ -18,7 +24,7 @@ private:
 	string name;
 
 public:
-	vector<Point> coords;
+	vector<Point> coords;	//all coordinate locations a ship object occupies
 
 	Ship();
 	Ship(int length, string);
@@ -31,7 +37,5 @@ public:
 	//Mutator methods
 	void setLength(int);
 	void setName(string);
-
 };
-
 #endif

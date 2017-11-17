@@ -1,31 +1,27 @@
-// Battleship.cpp : Defines the entry point for the console application.
-
 /********************************************************************
-
 Program:		Battleship
-Author:			Minh Kristein Vuong
-Date started:	9/20/2017
+Author:			Kristein Minh Vuong
+Dates:			Around 9/20/2017 through 10/9/2017
 
-Purpose:		Battleship console application that features AI with
-				two difficulty settings.
+Purpose:		Battleship console application that features bots with
+				two difficulty settings. 
+
+Notes:			Battleship.cpp defines entry point for console application.
 
 *********************************************************************/
-
-#include "stdafx.h"
 #include <iostream>
 #include <vector>
 #include <iomanip>		//setw
 #include <time.h>
-#include <map>
 #include <algorithm>	//find_if
+#include <stdlib.h>		//srand, rand
+#include <stdio.h>		//NULL
 #include "Constants.h"
 #include "Ship.h"
 #include "Point.h"
 #include "Bot.h"
 #include "EasyBot.h"
 #include "HardBot.h"
-#include <stdlib.h>		//srand, rand
-#include <stdio.h>		//NULL
 
 using namespace std;
 
@@ -50,7 +46,9 @@ int dif;			//distance between 2 coordinates
 int hpHuman = 17;	//human's healthpoints
 Ship *shipPtr;		//Ship pointer for user's ships
 Bot *botPtr;		//Bot pointer for desired bot
-bool findHit(int);
+
+//Function declarations
+bool findHit();
 bool horizontal();
 bool vertical();
 bool checkAtk(string);
@@ -79,11 +77,21 @@ Ship ca2(5, "Carrier");
 //Initalize array of pointers to computer's ships
 Ship *shipArPtrs[5] = { &d2,&s2,&c2,&b2,&ca2 };
 
-//Create potential AI
+//Create potential bot
 HardBot hb;
 EasyBot eb;
 
-//Check input of attack
+//Check input of Human's attack request
+/****************************************************************
+FUNCTION:   checkAtk()
+
+ARGUMENTS:  None
+
+RETURNS:	bool
+
+NOTES:		Checks if your attack command has correct input in
+			order to process. Returns true if correct.
+****************************************************************/
 bool checkAtk(string ans)
 {
 	//Checks if answer is correct size
@@ -110,7 +118,17 @@ bool checkAtk(string ans)
 	return true;
 }
 
-//Attack - returns true if game over
+/****************************************************************
+FUNCTION:   attack()
+
+ARGUMENTS:  None
+
+RETURNS:	bool
+
+NOTES:		Requests your command to attack at your specified grid
+			location. After your turn, computer executes his attack.
+			If this function returns true at all, someone has lost.
+****************************************************************/
 bool attack()
 {
 	//Ask user where to attack
@@ -127,7 +145,7 @@ bool attack()
 		getline(cin, ans);
 
 	//Convert y portion to int
-	y = ans.at(0) - 48;	//-48 because going by ASCII table
+	y = ans.at(0) - 48;	//-48 because ASCII table
 
 	//Convert x portion to int
 	if (ans.at(1) >= 'A' && ans.at(1) <= 'J')
@@ -135,30 +153,29 @@ bool attack()
 	else
 		x = ans.at(1) - 97;
 
-	//Declare atk coordinates
-	//Point atk(x, y);
+	//////////////////////////////
+	//							//
+	//  Check the target area	//
+	//							//
+	//////////////////////////////
 
-	//
-	// Check the target area
-	//
-
-	//MISS
+	//Miss
 	if (gridOffense[x][y] == water)
 	{
 		gridOffense[x][y] = miss;
 		humanMsg = "You missed your shot";
-		//cout << "         MISS\n";
 	}
 
-	//HIT
+	//Hit
 	else if (gridOffense[x][y] == ship)
 	{
 		gridOffense[x][y] = hit;
 		humanMsg = "Direct hit";
-        //cout << "         HIT\n";
+
 		//Create function to cycle through all ships' vectors of points to find what ship was hit, 
 		//	remove that point and check if vector.empty(), announce sunken ship if so
-		findHit(human);
+		findHit();
+
 		botPtr->setHealth(botPtr->getHealth()-1);	//subtract 1 health point from computer
 
 		//Checks if computer lost for Game Over
@@ -166,14 +183,11 @@ bool attack()
 			return true;
 	}
 
-	//SHOT ALREADY TAKEN AT THIS LOCATION
+	//Human shot already taken at this grid location
 	else if (gridOffense[x][y] == miss || gridOffense[x][y] == hit)
 	{
-		//cout << "You just bombed the target area again Captain, what a waste.\n";
-		humanMsg = "You wasted your shot";
+		humanMsg = "You wasted your shot";	//Human already fired at target location
 	}
-
-
 
 	//Bot's turn to attack
 	botPtr->strategy(hS);
@@ -195,12 +209,21 @@ bool attack()
 	return false;
 }
 
-//Parameter is either human or computer
-bool findHit(int attacker)
+/****************************************************************
+FUNCTION:   findHit()
+
+ARGUMENTS:  None
+
+RETURNS:	bool
+
+NOTES:		Halts searching for hit once a match has been found
+****************************************************************/
+bool findHit()
 {
-	//Cycle through all ships for to find the hit
+	//Cycle through all 5 computer ships to find the hit
 	for (int i = 0; i < 5; i++)
 	{
+		//Cycle through all coordinates of each computer ship
 		for (vector<Point>::iterator it = shipArPtrs[i]->coords.begin(); 
 			it != shipArPtrs[i]->coords.end(); it++)
 		{
@@ -231,6 +254,17 @@ bool findHit(int attacker)
 	return false;
 }
 
+/****************************************************************
+FUNCTION:   populateEnemyGrid()
+
+ARGUMENTS:  None
+
+RETURNS:	None
+
+NOTES:		Initiates enemy ship placement process. Randomly selects
+			a location to begin placement, and randomizes direction
+			between either horizontal or vertical.
+****************************************************************/
 void populateEnemyGrid()
 {
 	//Select random coordinate
@@ -238,7 +272,7 @@ void populateEnemyGrid()
 	xran = rand() % rows;
 	yran = rand() % cols;
 
-	//If selected random coordinate is occupied, find another
+	//If selected random coordinates is occupied, find another
 	while (gridOffense[xran][yran] == ship)
 	{
 		//Select random coordinate
@@ -280,17 +314,27 @@ void populateEnemyGrid()
 			}
 		}
 	}	
-	
-	/*cout << "-@-@-@-@-@-@-@-Checks AI ship vectors-@-@-@-@-@-@-@-\n";
+	/*
+	cout << "-@-@-@-@-@-@-@-Checks bot ship vectors-@-@-@-@-@-@-@-\n";
 	for (vector<Point>::iterator it = shipPtr->coords.begin(); it != shipPtr->coords.end(); it++)
 	{
 		cout << it->x << ", ";
 		cout << (*it).y << endl;
 	}	
-	cout << "-@-@-@-@-@-@-@-@-@-@-@-@-@-@-\n";*/
+	cout << "-@-@-@-@-@-@-@-@-@-@-@-@-@-@-\n";
+	*/
 }
 
-//AI horizontal ship placement - returns true if ship placement successful
+/****************************************************************
+FUNCTION:   horizontal()
+
+ARGUMENTS:  None
+
+RETURNS:	bool
+
+NOTES:		Bot horizontal ship placement. Checks for any collisions.
+			Returns true if ship placement was successful.
+****************************************************************/
 bool horizontal()
 {
 	int positiveCount = -1;	//start at -1 to ignore the initial placement
@@ -329,14 +373,23 @@ bool horizontal()
 			srand(time(0));
 			yran = rand() % cols;
 			xran = rand() % rows;
-			return 0;
+			return false;
 		}
 	}
 	//cout << "-------------\n";
-	return 1;
+	return true;
 }
 
-//AI vertical ship placement - returns true if ship placement successful
+/****************************************************************
+FUNCTION:   vertical()
+
+ARGUMENTS:  None
+
+RETURNS:	bool
+
+NOTES:		Bot vertical ship placement. Checks for any collisions.
+			Returns true if ship placement was successful.
+****************************************************************/
 bool vertical()
 {
 	int positiveCount = -1;	//start at -1 to ignore the initial placement
@@ -377,13 +430,24 @@ bool vertical()
 			srand(time(0));
 			xran = rand() % rows;
 			yran = rand() % cols;
-			return 0;
+			return false;
 		}
 	}
 	//cout << "-------------\n";
-	return 1;
+	return true;
 }
 
+/****************************************************************
+FUNCTION:   update()
+
+ARGUMENTS:  None
+
+RETURNS:	None
+
+NOTES:		Used to refresh the arenas and display attack message
+			notifications from both parties. May also display debug
+			messages if need be.
+****************************************************************/
 void update()
 {
 	system("cls");
@@ -431,16 +495,30 @@ void update()
 	}
 	cout << endl;
 
-	//HIT NOTIFICATION MESSAGE LINE
+	//Hit notification message line
 	cout << setw(30) << humanMsg << "         " << setw(22) << botMsg << endl;
 
-	//TEMPPPPPPPPPPPPPPPPPPPPPPPPPORARY - helps with whats going on in Bot's strategy()
-	//cout << debugMsg << endl;
-	//cout << botPtr->sx << " " << botPtr->sy << endl;
-	//cout << botPtr->resetStrat << endl;
-	//cout << botPtr->atkDirection << endl;
+	/*//Temporary - helps with what's going on in Bot's strategy()
+	cout << debugMsg << endl;
+	cout << botPtr->sx << " " << botPtr->sy << endl;
+	cout << botPtr->resetStrat << endl;
+	cout << botPtr->atkDirection << endl;
+	*/
 }
 
+/****************************************************************
+FUNCTION:   checkAnswer()
+
+ARGUMENTS:  None
+
+RETURNS:    bool
+
+NOTES:      Checks for correct input when attempting to place your
+			human ship. If correct, parses accordingly. Also checks 
+			for collision with any already existent human ships. 
+			If all tests pass, will return true and proceed to 
+			call another function for actual placement of ship.
+****************************************************************/
 bool checkAnswer()
 {
 	//Ask question
@@ -454,12 +532,12 @@ bool checkAnswer()
 	if (ans.length() != 5)
 	{
 		cout << " Please input the correct format, not case sensitive (Ex. 5E 7e):\n";
-		return 0;
+		return false;
 	}
 
 	//Checks if space was input
 	if (ans.find(' ', 0) == string::npos)	//if ' ' isn't found
-		return 0;
+		return false;
 
 	//separated string to place user's ships
 	tokens[0] = ans.substr(0, 2);
@@ -472,31 +550,32 @@ bool checkAnswer()
 		if (tokens[i].at(0) < '0' || tokens[i].at(0) > '9')
 		{
 			cout << " '" << tokens[i].at(0) << "' out of 0-9 range. Try again\n";
-			return 0;
+			return false;
 		}
 		//Checks for A-J (not caps-sensitive)
 		if (!((tokens[i].at(1) >= 'A' && tokens[i].at(1) <= 'J') ||
 			(tokens[i].at(1) >= 'a' && tokens[i].at(1) <= 'j')))
 		{
 			cout << " '" << tokens[i].at(1) << "' out of A-J range. Try again\n";
-			return 0;
+			return false;
 		}
 	}
 
+	//Called to convert parsed tokens into simpler int values
 	convertTokens();
 
 	//Tests if coordinates make ship of length 1
 	if(x==x2 && y==y2)
 	{
 		cout << " Please enter coordinates for a ship of length: " << shipPtr->getLength() << endl;
-		return 0;
+		return false;
 	}
 
 	//Tests if ship placed horizontally or vertically
 	if (!((x == x2 && y != y2) || (x != x2 && y == y2)))
 	{
 		cout << " Cannot place ship diagonally\n";
-		return 0;
+		return false;
 	}
 
 	//Retrieves distance between 2 coordinates
@@ -509,10 +588,15 @@ bool checkAnswer()
 	if (dif + 1 != shipPtr->getLength())
 	{
 		cout << " Please enter coordinates for a ship of length: " << shipPtr->getLength() << endl;
-		return 0;
+		return false;
 	}
 
-	//Checks for collision for defense grid
+	//////////////////////////////////////////////
+	//											//
+	//  Checks for collision for defense grid	//
+	//											//
+	//////////////////////////////////////////////
+
 	if (x == x2)
 	{
 		if (y < y2)
@@ -522,7 +606,7 @@ bool checkAnswer()
 				if (gridDefense[x][y + i] == ship)
 				{
 					cout << " There already exists a ship within these coordinates, try again.\n";
-					return 0;
+					return false;
 				}
 			}
 		}
@@ -533,7 +617,7 @@ bool checkAnswer()
 				if (gridDefense[x][y2 + i] == ship)
 				{
 					cout << " There already exists a ship within these coordinates, try again.\n";
-					return 0;
+					return false;
 				}
 			}
 		}
@@ -547,7 +631,7 @@ bool checkAnswer()
 				if (gridDefense[x + i][y] == ship)
 				{
 					cout << " There already exists a ship within these coordinates, try again.\n";
-					return 0;
+					return false;
 				}
 			}
 		}
@@ -558,7 +642,7 @@ bool checkAnswer()
 				if (gridDefense[x2 + i][y] == ship)
 				{
 					cout << " There already exists a ship within these coordinates, try again.\n";
-					return 0;
+					return false;
 				}
 			}
 		}
@@ -569,12 +653,21 @@ bool checkAnswer()
 	return true;
 }
 
+/****************************************************************
+FUNCTION:   placeShip()
+
+ARGUMENTS:  None
+
+RETURNS:	None
+
+NOTES:		Processes approved ship placement request.
+****************************************************************/
 void placeShip()
 {
 	//Builds ship into designated coordinates
 	if (x == x2)
 	{
-		//if 1st coord is smaller, start from that and increment upwards
+		//if 1st coord < 2nd coord, increment from first coord
 		if (y < y2)
 		{
 			for (int i = 0; i < dif + 1; i++)
@@ -622,7 +715,17 @@ void placeShip()
 	update();
 }
 
-//converts string to separate coordinates
+/****************************************************************
+FUNCTION:   convertTokens()
+
+ARGUMENTS:  None
+
+RETURNS:	None
+
+NOTES:		Converts the char value of input into actual integers
+			by subtracting the difference between the values on the
+			ASCII table. Used for easier processing of coordinates.
+****************************************************************/
 void convertTokens()
 {
 	//Convert y token to int
@@ -659,6 +762,7 @@ int main()
 		cin >> botChoice;
 	}
 
+	//Sets the bot pointer to the address of either the HardBot or EasyBot object
 	switch (botChoice)
 	{
 	case 1: 
@@ -686,11 +790,11 @@ int main()
 	//clears cin before getline cin
 	cin.ignore();
 
-	/////////////////////////
-	//
-	// Place computer's ships
-	//
-	/////////////////////////
+	//////////////////////////////
+	//							//
+	//  Place computer's ships	//
+	//							//
+	//////////////////////////////
 
 	//Direct Ship pointer to all of AI's Ships
 	shipPtr = &d2;
@@ -705,11 +809,11 @@ int main()
 	populateEnemyGrid();
 	update();
 
-	/////////////////////////
-	//
-	// Place human's ships
-	//
-	/////////////////////////
+	//////////////////////////
+	//						//
+	// Place human's ships	//
+	//						//
+	//////////////////////////
 
 	//Change ship pointer to the Destroyer
 	shipPtr = &d;
@@ -732,7 +836,7 @@ int main()
 	shipPtr = &ca;
 	while (!checkAnswer());
 
-	// Commence Firing!
+	// Commence Firing! (Until someone's HP drains to 0)
 	while (!attack());
 
 	//Final update before victory/defeat message
@@ -740,12 +844,10 @@ int main()
 
 	// GAME OVER
 	if (botPtr->getHealth() == 0)
-		cout << "\n\n You are VICTORIOUS! GG.\n\n\n\n\n\n\n";
+		cout << "\n\n You are VICTORIOUS! GG.\n\n\n\n\n\n\n\n";
 	else if(hpHuman == 0)
-		cout << "\n\n You've been DEFEATED, what a loser. GG.\n\n\n\n\n\n\n";
+		cout << "\n\n You've been DEFEATED, what a loser. GG.\n\n\n\n\n\n\n\n";
 
-	cout << endl;
 	system("pause");
     return 0;
 }
-

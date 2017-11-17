@@ -1,17 +1,25 @@
-#include "stdafx.h"
 #include "EasyBot.h"
-
 
 EasyBot::EasyBot()
 {
 	setBotName("Bronze Bot");
 }
 
-
 EasyBot::~EasyBot()
 {
 }
 
+/****************************************************************
+FUNCTION:   strategy()
+
+ARGUMENTS:  Ship * hS[] - array of pointers to human ships
+
+RETURNS:    None
+
+NOTES:		EasyBot's implementation of strategy() which simply
+			fires at random locations that are available from
+			options vector.
+****************************************************************/
 void EasyBot::strategy(Ship * hS[])
 {
 	//Similar to HardBot's beginning of strategy()

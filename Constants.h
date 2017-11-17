@@ -1,4 +1,10 @@
-#pragma once
+/****************************************************************
+FILE:		Constants.h
+AUTHOR:		Kristein Minh Vuong
+
+PURPOSE:	Contains constant variables and extern variables that
+			can be shared among several .cpp files
+****************************************************************/
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 

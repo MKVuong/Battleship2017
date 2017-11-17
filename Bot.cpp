@@ -1,6 +1,4 @@
-#include "stdafx.h"
 #include "Bot.h"
-
 
 Bot::Bot()
 {
@@ -32,6 +30,16 @@ void Bot::setBotName(string newName)
 	botName = newName;
 }
 
+/****************************************************************
+FUNCTION:   updateOptions()
+
+ARGUMENTS:  None
+
+RETURNS:    None
+
+NOTES:		Updates vector of available locations for the bot to 
+			attack.
+****************************************************************/
 void Bot::updateOptions()
 {
 	for (vector<Point>::iterator it = options.begin();
@@ -47,7 +55,17 @@ void Bot::updateOptions()
 	}
 }
 
-//Effectively halts aiming for specific ship once destroyed, resets direction, strat, & displacement
+/****************************************************************
+FUNCTION:   findCpuHit()
+
+ARGUMENTS:  Ship* hS[] - array of pointers to human ships
+
+RETURNS:    bool
+
+NOTES:		Effectively halts aiming for specific ship once 
+			destroyed, resets direction, strat, and displacement.
+			Returns true if hit found to stop function's run.
+****************************************************************/
 bool Bot::findCpuHit(Ship* hS[])
 {
 	//Cycle through all ships for to find the hit
@@ -65,7 +83,7 @@ bool Bot::findCpuHit(Ship* hS[])
 			{
 				//botMsg = passed coordinates match found
 				*it = hS[i]->coords.back();	//assign to last element
-				hS[i]->coords.pop_back();
+				hS[i]->coords.pop_back();	//remove that element
 				//cout << "Ship found: " << shipArPtrs[i]->getName() << ". Current vctr elements remain:\n";
 
 				//Check if that entire ship is destroyed

@@ -2,9 +2,9 @@
                               Battleship
 ========================================================================
 
-A personal project where I've spent about 2 weeks and just recently
-completed in early October of 2017. It was a great practice which involved
-usage of Object Oriented Programming, and many programming concepts within.
+A personal project I've developed recently in early October of 2017. It is
+the classic game 'Battleship' which features 2 bot difficulties. Project time
+took about a couple weeks. Also involves Object Oriented Programming.
 
 /////////////////////////////////////////////////////////////////////////////
 Game features
